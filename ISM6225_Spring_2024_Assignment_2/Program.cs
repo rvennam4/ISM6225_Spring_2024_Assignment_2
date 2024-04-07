@@ -48,13 +48,13 @@ namespace ISM6225_Spring_2024_Assignment_2
 
             //Question 6:
             Console.WriteLine("Question 6:");
-            int[] nums5 = { 3,6,9,1 };
+            int[] nums5 = { 3, 6, 9, 1 };
             int maxGap = MaximumGap(nums5);
             Console.WriteLine(maxGap);
 
             //Question 7:
             Console.WriteLine("Question 7:");
-            int[] nums6 = { 2,1,2 };
+            int[] nums6 = { 2, 1, 2 };
             int largestPerimeterResult = LargestPerimeter(nums6);
             Console.WriteLine(largestPerimeterResult);
 
@@ -94,19 +94,35 @@ namespace ISM6225_Spring_2024_Assignment_2
         -100 <= nums[i] <= 100
         nums is sorted in non-decreasing order.
         */
-
         public static int RemoveDuplicates(int[] nums)
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return 0;
+                if (nums.Length == 0) return 0;  // If the array is empty, return 0 immediately.
+
+                int i = 0;  // Initialize the index for unique elements at the first position.
+
+                // Iterate over the array starting from the second element.
+                for (int j = 1; j < nums.Length; j++)
+                {
+                    // If the current element is not the same as the element at index i,
+                    // it is a unique element.
+                    if (nums[j] != nums[i])
+                    {
+                        i++;            // Increment i to move to the next position.
+                        nums[i] = nums[j];  // Set the next position with the current unique element.
+                    }
+                }
+
+                // The number of unique elements is i + 1, because index i is zero-based.
+                return i + 1;
             }
             catch (Exception)
             {
-                throw;
+                throw;  // Rethrow any exception that occurs.
             }
         }
+
 
         /*
         
@@ -134,12 +150,28 @@ namespace ISM6225_Spring_2024_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return new List<int>();
+                int insertPos = 0; // This will track the position to insert the next non-zero element.
+
+                // First pass: pull all non-zero elements to the front of the array.
+                for (int i = 0; i < nums.Length; i++)
+                {
+                    if (nums[i] != 0)
+                    {
+                        nums[insertPos++] = nums[i]; // Place the non-zero element at the insert position and increment.
+                    }
+                }
+
+                // Second pass: fill remaining positions with zeros.
+                while (insertPos < nums.Length)
+                {
+                    nums[insertPos++] = 0; // Fill the rest of the array with zeros.
+                }
+
+                return nums; // Return the modified array as a list for consistent interface, though it is not required by the problem.
             }
             catch (Exception)
             {
-                throw;
+                throw; // Rethrow any exception that occurs.
             }
         }
 
@@ -183,15 +215,37 @@ namespace ISM6225_Spring_2024_Assignment_2
 
         public static IList<IList<int>> ThreeSum(int[] nums)
         {
-            try
+            Array.Sort(nums); // Sort the array to use two-pointer technique
+            IList<IList<int>> result = new List<IList<int>>();
+
+            for (int i = 0; i < nums.Length - 2; i++)
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return new List<IList<int>>();
+                if (i > 0 && nums[i] == nums[i - 1]) continue; // Skip the same result
+
+                int left = i + 1, right = nums.Length - 1;
+                while (left < right)
+                {
+                    int sum = nums[i] + nums[left] + nums[right];
+                    if (sum == 0)
+                    {
+                        result.Add(new List<int> { nums[i], nums[left], nums[right] });
+                        while (left < right && nums[left] == nums[left + 1]) left++; // Skip duplicates
+                        while (left < right && nums[right] == nums[right - 1]) right--; // Skip duplicates
+                        left++; // Move left pointer to the right
+                        right--; // Move right pointer to the left
+                    }
+                    else if (sum < 0)
+                    {
+                        left++; // Need a larger sum
+                    }
+                    else
+                    {
+                        right--; // Need a smaller sum
+                    }
+                }
             }
-            catch (Exception)
-            {
-                throw;
-            }
+
+            return result;
         }
 
         /*
@@ -220,12 +274,39 @@ namespace ISM6225_Spring_2024_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return 0;
+                int maxCount = 0; // Maximum number of consecutive 1s found
+                int currentCount = 0; // Current number of consecutive 1s being counted
+
+                foreach (int num in nums)
+                {
+                    if (num == 1)
+                    {
+                        // Increment the count of consecutive 1s
+                        currentCount++;
+                    }
+                    else
+                    {
+                        // If a zero is found, compare currentCount with maxCount and update maxCount if necessary
+                        if (currentCount > maxCount)
+                        {
+                            maxCount = currentCount;
+                        }
+                        // Reset currentCount because the streak of 1s has been broken
+                        currentCount = 0;
+                    }
+                }
+
+                // Final check to ensure the last sequence of 1s is considered
+                if (currentCount > maxCount)
+                {
+                    maxCount = currentCount;
+                }
+
+                return maxCount; // Return the maximum count of consecutive 1s
             }
             catch (Exception)
             {
-                throw;
+                throw; // Propagate exceptions to the calling method
             }
         }
 
@@ -256,14 +337,26 @@ namespace ISM6225_Spring_2024_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return 0;
+                int decimalValue = 0;  // To store the decimal equivalent of the binary number.
+                int baseValue = 1;     // Represents the current power of 2 (2^0 initially).
+
+                while (binary > 0)
+                {
+                    int lastDigit = binary % 10;  // Extract the last digit of the binary number.
+                    binary /= 10;                // Remove the last digit from the binary number.
+
+                    decimalValue += lastDigit * baseValue;  // Add the contribution of the last digit.
+                    baseValue *= 2;               // Move to the next power of 2.
+                }
+
+                return decimalValue;  // Return the computed decimal value.
             }
             catch (Exception)
             {
-                throw;
+                throw;  // Properly handle any unexpected exceptions.
             }
         }
+
 
         /*
 
@@ -292,16 +385,46 @@ namespace ISM6225_Spring_2024_Assignment_2
 
         public static int MaximumGap(int[] nums)
         {
-            try
+            if (nums.Length < 2) return 0;  // Handle the case with fewer than two elements.
+
+            int n = nums.Length;
+            int minVal = nums.Min();
+            int maxVal = nums.Max();
+
+            if (minVal == maxVal) return 0;  // All elements are the same.
+
+            // Calculate bucket size and number of buckets
+            int bucketSize = Math.Max(1, (maxVal - minVal) / (n - 1));
+            int bucketCount = (maxVal - minVal) / bucketSize + 1;
+
+            // Initialize buckets
+            int?[] bucketMin = new int?[bucketCount];
+            int?[] bucketMax = new int?[bucketCount];
+
+            foreach (int num in nums)
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return 0;
+                int idx = (num - minVal) / bucketSize;  // Determine the bucket index for the current number
+                if (!bucketMin[idx].HasValue || num < bucketMin[idx]) bucketMin[idx] = num;
+                if (!bucketMax[idx].HasValue || num > bucketMax[idx]) bucketMax[idx] = num;
             }
-            catch (Exception)
+
+            // Compute the maximum gap
+            int maxGap = 0;
+            int previousMax = bucketMax[0].Value;  // Initial previous bucket max
+
+            for (int i = 1; i < bucketCount; i++)
             {
-                throw;
+                if (!bucketMin[i].HasValue) continue;  // Skip empty buckets
+
+                // Current gap is the difference between the minimum of the current bucket and the maximum of the previous bucket
+                maxGap = Math.Max(maxGap, bucketMin[i].Value - previousMax);
+                previousMax = bucketMax[i].Value;
             }
+
+            return maxGap;
         }
+
+
 
         /*
 
@@ -332,16 +455,24 @@ namespace ISM6225_Spring_2024_Assignment_2
 
         public static int LargestPerimeter(int[] nums)
         {
-            try
+            // Sort the array in non-decreasing order
+            Array.Sort(nums);
+
+            // Start from the end of the sorted array to check for the largest possible perimeter
+            for (int i = nums.Length - 1; i >= 2; i--)
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return 0;
+                // Check if these three sides can form a triangle
+                if (nums[i - 2] + nums[i - 1] > nums[i])
+                {
+                    // If they can form a triangle, return the perimeter of this triangle
+                    return nums[i - 2] + nums[i - 1] + nums[i];
+                }
             }
-            catch (Exception)
-            {
-                throw;
-            }
+
+            // If no valid triangle is found, return 0
+            return 0;
         }
+
 
         /*
 
@@ -388,12 +519,18 @@ namespace ISM6225_Spring_2024_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return "";
+                // Loop to continually search for the substring 'part' and remove it
+                int idx; // Variable to store the index of 'part' in 's'
+                while ((idx = s.IndexOf(part)) != -1) // While 'part' is found in 's'
+                {
+                    s = s.Remove(idx, part.Length); // Remove 'part' starting at index 'idx'
+                }
+
+                return s; // Return the modified string after all occurrences of 'part' have been removed
             }
             catch (Exception)
             {
-                throw;
+                throw; // Propagate exceptions to the calling method
             }
         }
 
